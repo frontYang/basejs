@@ -86,7 +86,7 @@ Base.prototype = {
 
 	//获取id节点
 	getId: function(id){
-		return document.getElementById(id);
+		return (typeof id == "object") ? id : document.getElementById(id);
 	},
 
 	//获取class节点
