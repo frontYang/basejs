@@ -1,6 +1,6 @@
 /**
  * 基础库:常用事件封装
- * @authors yangzhifang
+ * @authors frontYang
  * @date    2016-10-08
  *
  * 可以链式调用
