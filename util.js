@@ -28,14 +28,11 @@
 			var node = (parent != undefined) ? parent : document;
 			var all = node.getElementsByTagName('*');
 			
-			for(var i = 0, len = all.length; i < len; i ++){
-				(function(i){
-					if((new RegExp('(\\s|^)' + cls +'(\\s|$)')).test(all[i].className)) {
-						temps.push(all[i]);
-					}
-				}(i));
+			for(var i = 0, len = all.length; i < len; i ++){				
+				if((new RegExp('(\\s|^)' + cls +'(\\s|$)')).test(all[i].className)) {
+					temps.push(all[i]);
+				}		
 			}
-
 			return temps;
 		},
 
@@ -147,6 +144,11 @@
 			e.preventDefault && e.preventDefault();
 		},
 
+		//阻止默认行为
+		stopPro: function(e){
+			e.stopPropagation && e.stopPropagation();
+		},
+
 		//获取事件目标
 		getTarget: function(e){
 			var e = e || window.event;
@@ -179,7 +181,10 @@
 			}
 		},
 
-		//创建cookie
+		/**
+		 * 创建cookie
+		 * @param {object} opts {name: 名, value: 值, expires: 有效期, path: path, domain: domain, secure: secure}
+		 */
 		setCookie: function(opts) {
 			var name = opts.name, value = opts.value, expires = opts.expires, path = opts.path, domain = opts.domain, secure = opts.secure;
 			var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value);
@@ -260,20 +265,4 @@
 	}
 }(window, document));
 
-//slide库
-;(function(w, $, t){
-	w.slideM = {
-		//滚动
-		initSlide: function(opts){
-			var opts = opts || {};
-			var initOpts = {
-				
-			}
-			var opts = t.extend(opts,initOpts, false)
-			return new SLide(opts);
-		}
-	}
-
-	var s = w.slideM;
-
-}(window, jQuery, tool));
+//待续...
