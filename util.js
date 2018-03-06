@@ -1,37 +1,37 @@
 
 //工具库
-;(function(w, d){
-	w.tool = {
+;(function(window, document){
+	var Util = {
 		//getElementById
 		getId: function(id){
-			return (typeof id == "object") ? id : d.getElementById(id);
+			return (typeof id == "object") ? id : document.getElementById(id);
 		},
 
 		//querySelector
-		getElem: function(cls){			
-			return d.querySelector(cls);
+		getElem: function(cls){
+			return document.querySelector(cls);
 		},
 
 		//querySelectorAll
 		getElems: function(cls){
-			return d.querySelectorAll(cls);
+			return document.querySelectorAll(cls);
 		},
 
 		//getElementsByTagName
 		getTagName: function(tag){
-			return d.getElementsByTagName(tag);
+			return document.getElementsByTagName(tag);
 		},
 
 		//getElementByclass
-		getClass: function(cls, parent){			
+		getClass: function(cls, parent){
 			var temps = [];
 			var node = (parent != undefined) ? parent : document;
 			var all = node.getElementsByTagName('*');
-			
-			for(var i = 0, len = all.length; i < len; i ++){				
+
+			for(var i = 0, len = all.length; i < len; i ++){
 				if((new RegExp('(\\s|^)' + cls +'(\\s|$)')).test(all[i].className)) {
 					temps.push(all[i]);
-				}		
+				}
 			}
 			return temps;
 		},
@@ -56,8 +56,8 @@
 			if(!ele) { return; }
 
 			var val;
-			if(typeof w.getComputedStyle != 'undefined') { //W3C
-				val = w.getComputedStyle(ele, null)[attr];
+			if(typeof window.getComputedStyle != 'undefined') { //W3C
+				val = window.getComputedStyle(ele, null)[attr];
 			} else if(typeof ele.currentStyle != 'undefined') { //IE
 				val = ele.currentStyle[attr];
 			}
@@ -67,15 +67,15 @@
 
 		//跨浏览器获取视口大小
 		getInner: function() {
-			if(typeof w.innerWidth != 'undefined'){
+			if(typeof window.innerWidth != 'undefined'){
 				return {
-					width: w.innerWidth,
-					height: w.innerHeight
+					width: window.innerWidth,
+					height: window.innerHeight
 				}
 			}else {
 				return {
-					width: d.documentElement.innerWidth,
-					height: d.documentElement.innerHeight	
+					width: document.documentElement.innerWidth,
+					height: document.documentElement.innerHeight	
 				}
 			}
 		},
@@ -83,8 +83,8 @@
 		//跨浏览器获取滚动条位置
 		getScroll: function(){
 			return {
-				top: d.documentElement.scrollTop || d.body.scrollTop,
-				left: d.documentElement.scrollLeft || d.body.scrollLeft,
+				top: document.documentElement.scrollTop || document.body.scrollTop,
+				left: document.documentElement.scrollLeft || document.body.scrollLeft,
 			}
 		},
 
@@ -135,7 +135,7 @@
 		},
 
 		//获取一组数的随机数
-		random: function(arr){				
+		random: function(arr){
 			return this.isArray(arr) && arr[Math.floor(Math.random() * arr.length)];
 		},
 
@@ -193,31 +193,31 @@
 			path && (cookieText += '; path=' + path);
 			domain && (cookieText += '; domain=' + domain);
 			secure && (cookieText += '; secure=' + secure);
-			
-			d.cookie = cookieText;
+
+			document.cookie = cookieText;
 		},
 
 		//读取cookie
 		getCookie: function(name){
 			var cookieName = encodeURIComponent(name) + '=';
-			var cookieStart = d.cookie.indexOf(cookieName);
+			var cookieStart = document.cookie.indexOf(cookieName);
 			var cookieValue = null;
 			if(cookieStart > -1) {
-				var cookieEnd = d.cookie.indexOf(';' ,cookieStart);
+				var cookieEnd = document.cookie.indexOf(';' ,cookieStart);
 				if(cookieStart == -1){
-					cookieEnd = d.cookie.length;
+					cookieEnd = document.cookie.length;
 				}
 
-				cookieValue = decodeURIComponent(d.cookie.substring(cookieStart + cookieName.length, cookieEnd));
+				cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
 			}
 			return cookieValue;
 		},
 
 		//删除cookie
 		delCookie: function(name){
-			d.cookie = name + '= ; expires=' + new Date(0);
+			document.cookie = name + '= ; expires=' + new Date(0);
 		},
-		
+
 		/**
 		 * 获取url参数
 		 * @param  {string} url  url地址
@@ -225,7 +225,7 @@
 		 * @param  {string} type 分隔符号，默认 ?
 		 * @return {string}      获取到的参数
 		 */
-		getParam: function(url, name, type){
+		getParam(url, name, type){
 			if(!url || !name) { return; }
 
 			var type = (type == null) ? '?' : type;
@@ -237,7 +237,7 @@
 		},
 
 		//图片替换
-		replaceSrc(obj, src) {
+		replaceSrc: function(obj, src) {
 			if (!obj || 'object' != typeof obj) return;
 
 			var imgArr = obj.getElementsByTagName('img');
@@ -251,6 +251,44 @@
 			}
 		},
 
+		//函数节流（throttle）
+		throttle: function(fn, threshhold, scope) {
+			threshhold || (threshhold = 250);
+			var last, timer;
+			return function() {
+				var context = scope || this;
+				var now = +new Date(),
+					args = arguments;
+
+				if (last && now - last + threshhold < 0) {
+					clearTimeout(deferTimer);
+					timer = setTimeout(function() {
+						last = now;
+						fn.apply(context, args);
+					}, threshhold);
+				} else {
+					last = now;
+					fn.apply(context, args);
+				}
+			}
+		},
+
+		//函数去抖
+		debounce: function(fn, delay){
+			var timer = null;
+			return function(){
+				var context = this, args = arguments;
+				clearTimeout(timer);
+				timer = setTimeout(function(){
+					fn.apply(context, args);
+				}, delay)
+			}
+		},
+
+		placeholderSuport: function() {
+		   return "placeholder" in document.createElement("input")
+		}
+
 		//功能扩展
 		extend: function(destination, source, override, replacer) {
 			if (override === undefined) override = true;
@@ -263,6 +301,8 @@
 			return destination;
 		}
 	}
+
+	window.Util = Util;
 }(window, document));
 
 //待续...
